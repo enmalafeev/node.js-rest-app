@@ -1,7 +1,6 @@
-import { AppDataSource } from "./data-source";
-import { User } from "./entity/User";
+import { AppDataSource } from "../src/data-source.js";
+import { User } from "./entity/User.js";
 import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
-// import { Server, IncomingMessage, ServerResponse } from "http";
 
 const server: FastifyInstance = Fastify({});
 
