@@ -1,6 +1,5 @@
-# Repository Template
+# REST app on Fastify
 
 ## Description
 
-Please fork this repo to create your projects in SPTM — Learning JS organization.
-With any questions please contact me at learningjs@sptm.dev.
+This is a test node.js app with Fastify, Mongo, Redis.
