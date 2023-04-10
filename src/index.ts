@@ -1,56 +1,20 @@
-import { AppDataSource } from "../src/data-source.js";
-import { User } from "./entity/User.js";
-import Fastify, { FastifyInstance, RouteShorthandOptions } from "fastify";
+import fastify from "fastify";
+import Swagger from "@fastify/swagger";
+import fastifySwaggerUi from "@fastify/swagger-ui";
+import AutoLoad from "@fastify/autoload";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-const server: FastifyInstance = Fastify({});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          pong: {
-            type: "string",
-          },
-        },
-      },
-    },
-  },
-};
+const server = fastify();
 
-AppDataSource.initialize()
-  .then(async () => {
-    console.log("Inserting a new user into the database...");
-    const user = new User();
-    user.firstName = "Timber";
-    user.lastName = "Saw";
-    user.age = 25;
-    await AppDataSource.manager.save(user);
-    console.log("Saved a new user with id: " + user.id);
+server.register(Swagger);
+server.register(fastifySwaggerUi);
+server.register(AutoLoad, {
+  dir: join(__dirname, "routes"),
+  forceESM: true,
+});
 
-    console.log("Loading users from the database...");
-    const users = await AppDataSource.manager.find(User);
-    console.log("Loaded users: ", users);
-
-    console.log(
-      "Here you can setup and run express / fastify / any other framework."
-    );
-    server.get("/ping", opts, async (request, reply) => {
-      return { pong: "it worked!" };
-    });
-
-    const start = async () => {
-      try {
-        await server.listen({ port: 3000 });
-
-        const address = server.server.address();
-        const port = typeof address === "string" ? address : address?.port;
-      } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-      }
-    };
-    start();
-  })
-  .catch((error) => console.log(error));
+server.listen({ port: 3000 });
